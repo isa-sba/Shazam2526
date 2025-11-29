@@ -114,7 +114,10 @@ public class teleop extends OpMode {
         if (gamepad1.a) {
             imu.resetYaw();
         }
-
+        telemetry.addData("fl",frontLeftDrive.getCurrentPosition());
+        telemetry.addData("bl",backLeftDrive.getCurrentPosition());
+        telemetry.addData("br",backRightDrive.getCurrentPosition());
+        telemetry.addData("fr",frontRightDrive.getCurrentPosition());
         // If you press the left bumper, you get a drive from the point of view of the robot
         // (much like driving an RC vehicle)
 
