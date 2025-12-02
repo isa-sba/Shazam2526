@@ -62,41 +62,35 @@ public class teleop extends OpMode {
     DcMotor backLeftDrive;
     DcMotor backRightDrive;
 
-    DcMotor leftOuttake, rightOuttake;
-    CRServo loading;
-    DcMotor intake;
+    //DcMotor launcherDrive;
+//    DcMotor leftOuttake, rightOuttake;
+//    CRServo intake;
 
     // This declares the IMU needed to get the current direction the robot is facing
-
+    IMU imu;
 
     @Override
     public void init() {
-//        frontLeftDrive = hardwareMap.get(DcMotor.class, "fl");
-//        frontRightDrive = hardwareMap.get(DcMotor.class, "fr");
-//        backLeftDrive = hardwareMap.get(DcMotor.class, "bl");
-//        backRightDrive = hardwareMap.get(DcMotor.class,"br");
-        leftOuttake = hardwareMap.get(DcMotor.class,"lo");
-        rightOuttake = hardwareMap.get(DcMotor.class,"ro");
-        loading = hardwareMap.get(CRServo.class,"l");
-        intake = hardwareMap.get(DcMotor.class,"i");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "fl");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "fr");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "bl");
+        backRightDrive = hardwareMap.get(DcMotor.class,"br");
 
 
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
-//        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-//        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-        loading.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
 
         // This uses RUN_USING_ENCODER to be more accurate.   If you don't have the encoder
         // wires, you should remove these
-//        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        imu = hardwareMap.get(IMU.class, "imu");
         // This needs to be changed to match the orientation on your robot
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -105,7 +99,7 @@ public class teleop extends OpMode {
 
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
-
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
 
     @Override
@@ -117,38 +111,30 @@ public class teleop extends OpMode {
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
-
+        if (gamepad1.a) {
+            imu.resetYaw();
+        }
+        telemetry.addData("fl",frontLeftDrive.getCurrentPosition());
+        telemetry.addData("bl",backLeftDrive.getCurrentPosition());
+        telemetry.addData("br",backRightDrive.getCurrentPosition());
+        telemetry.addData("fr",frontRightDrive.getCurrentPosition());
         // If you press the left bumper, you get a drive from the point of view of the robot
         // (much like driving an RC vehicle)
 
-//        drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
 
-        intake.setPower(gamepad1.left_stick_y);
-        if(gamepad1.b){
-            leftOuttake.setPower(1);
-            rightOuttake.setPower(1);
-        }
-        if(gamepad1.x){
-            leftOuttake.setPower(0);
-            rightOuttake.setPower(0);
-        }
-        if(gamepad1.dpad_up){
-            loading.setPower(1);
-        }
-        if(gamepad1.dpad_down){
-            loading.setPower(-1);
-        }
-        if(gamepad1.dpad_left) {
-            loading.setPower(0);
-        }
-        if(gamepad1.y) {
-            intake.setPower(1);
-        }
-        if(gamepad1.a) {
-            intake.setPower(-1);
-        }
 
+//        if(gamepad1.x) intake.setPower(1);
+//        else intake.setPower(0);
+//
+//        if(gamepad1.right_bumper) {
+//            leftOuttake.setPower(1);
+//            rightOuttake.setPower(1);
+//        } else {
+//            leftOuttake.setPower(0);
+//            rightOuttake.setPower(0);
+//        }
     }
 
     // This routine drives the robot field relative
@@ -158,7 +144,8 @@ public class teleop extends OpMode {
         double r = Math.hypot(right, forward);
 
         // Second, rotate angle by the angle the robot is pointing
-
+        theta = AngleUnit.normalizeRadians(theta -
+                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         // Third, convert back to cartesian
         double newForward = r * Math.sin(theta);
