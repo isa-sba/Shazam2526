@@ -28,7 +28,10 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,6 +41,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 /*
@@ -54,8 +58,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  *
  */
-@TeleOp(name = "Robot: Field Relative Mecanum Drive", group = "Robot")
-public class teleop extends OpMode {
+@Autonomous(name = "autonomous", group = "Robot")
+public class auto extends OpMode {
     // This declares the four motors needed
     DcMotor frontLeftDrive;
     DcMotor frontRightDrive;
@@ -65,6 +69,8 @@ public class teleop extends OpMode {
     DcMotor leftOuttake, rightOuttake;
     CRServo loading;
     DcMotor intake;
+
+    double time = 0;
 
     // This declares the IMU needed to get the current direction the robot is facing
 
@@ -83,7 +89,6 @@ public class teleop extends OpMode {
 
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
-        //For the record, I did not comment this out. If this code works when I upload it this is NOT my fault - sincerely, Christian A
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         leftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -111,6 +116,7 @@ public class teleop extends OpMode {
 
     @Override
     public void loop() {
+        time += 1;
         telemetry.addLine("Press A to reset Yaw");
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
@@ -121,33 +127,17 @@ public class teleop extends OpMode {
 
         // If you press the left bumper, you get a drive from the point of view of the robot
         // (much like driving an RC vehicle)
+        if(time<1000)
+        backLeftDrive.setPower(1);
+        frontLeftDrive.setPower(1);
+        backRightDrive.setPower(1);
+        frontRightDrive.setPower(1);
 
-        drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-
-        if(gamepad2.b){
-            leftOuttake.setPower(1);
-            rightOuttake.setPower(1);
-        }
-        if(gamepad2.x){
-            leftOuttake.setPower(0);
-            rightOuttake.setPower(0);
-        }
-        if(gamepad2.dpad_up){
-            loading.setPower(1);
-        }
-        if(gamepad2.dpad_down){
-            loading.setPower(-1);
-        }
-        if(gamepad2.dpad_left) {
-            loading.setPower(0);
-        }
-        if(gamepad2.y) {
-            intake.setPower(0);
-        }
-        if(gamepad2.a) {
-            intake.setPower(-1);
-        }
+        backRightDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        frontLeftDrive.setPower(0);
     }
 
     // This routine drives the robot field relative
@@ -171,10 +161,10 @@ public class teleop extends OpMode {
     public void drive(double forward, double right, double rotate) {
         // This calculates the power needed for each wheel based on the amount of forward,
         // strafe right, and rotate
-        double frontLeftPower = forward + right - rotate;
-        double frontRightPower = forward - right + rotate;
-        double backRightPower = forward + right + rotate;
-        double backLeftPower = forward - right - rotate;
+        double frontLeftPower = forward - right + rotate;
+        double frontRightPower = forward + right - rotate;
+        double backRightPower = forward - right - rotate;
+        double backLeftPower = forward + right + rotate;
         //double outpow = forward;
 
         double maxPower = 1.0;
