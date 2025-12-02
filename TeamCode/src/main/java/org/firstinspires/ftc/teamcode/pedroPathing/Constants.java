@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -13,7 +14,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(9.2);
+            .mass(9.2)
+            .forwardZeroPowerAcceleration(-66.78892045951896)
+            .lateralZeroPowerAcceleration(-118.51966251318674)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.01, 0));
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
@@ -34,7 +38,9 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(57.376465007253124)
+            .yVelocity(50.87122016901882);
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
             .rightFrontMotorName("fr")
             .rightRearMotorName("br")
@@ -46,8 +52,8 @@ public class Constants {
             .rightRearEncoderDirection(Encoder.FORWARD)
             .robotWidth(12.5984)
             .robotLength(13.2283)
-            .forwardTicksToInches(.02208)
-            .strafeTicksToInches(.12696)
-            .turnTicksToInches(.0135876);
+            .forwardTicksToInches(0.00577687)
+            .strafeTicksToInches(0.0057984)
+            .turnTicksToInches(0.01144224);
 }
 
