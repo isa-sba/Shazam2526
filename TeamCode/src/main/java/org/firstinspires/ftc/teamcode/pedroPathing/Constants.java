@@ -34,7 +34,7 @@ public class Constants {
 
     }
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
+            .maxPower(.7)
             .rightFrontMotorName("fr")
             .rightRearMotorName("br")
             .leftRearMotorName("bl")
@@ -43,8 +43,9 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(57.376465007253124)
-            .yVelocity(50.87122016901882);
+            .xVelocity(50) //57.376465007253124
+            .yVelocity(43
+            ); //50.87122016901882
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
             .rightFrontMotorName("fr")
             .rightRearMotorName("br")

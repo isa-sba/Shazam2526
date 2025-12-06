@@ -171,14 +171,14 @@ public class teleop extends OpMode {
     public void drive(double forward, double right, double rotate) {
         // This calculates the power needed for each wheel based on the amount of forward,
         // strafe right, and rotate
-        double frontLeftPower = forward + right - rotate;
-        double frontRightPower = forward - right + rotate;
-        double backRightPower = forward + right + rotate;
-        double backLeftPower = forward - right - rotate;
+        double frontLeftPower = forward - right - rotate;
+        double frontRightPower = forward + right + rotate;
+        double backRightPower = forward - right + rotate;
+        double backLeftPower = forward + right - rotate;
         //double outpow = forward;
 
-        double maxPower = 1.0;
-        double maxSpeed = 1.0;  // make this slower for outreaches
+        double maxPower = .6;
+        double maxSpeed = .6;  // make this slower for outreaches
 
         // This is needed to make sure we don't pass > 1.0 to any wheel
         // It allows us to keep all of the motors in proportion to what they should

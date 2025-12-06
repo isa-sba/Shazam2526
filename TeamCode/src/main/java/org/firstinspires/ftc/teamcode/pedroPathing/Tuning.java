@@ -24,6 +24,8 @@ import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +133,7 @@ class LocalizationTest extends OpMode {
     @Override
     public void init() {
         follower.setStartingPose(new Pose(72,72));
+
     }
 
     /** This initializes the PoseUpdater, the mecanum drive motors, and the Panels telemetry. */
