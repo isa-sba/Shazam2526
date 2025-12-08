@@ -177,8 +177,9 @@ public class teleop extends OpMode {
         double backLeftPower = forward + right - rotate;
         //double outpow = forward;
 
-        double maxPower = .6;
-        double maxSpeed = .6;  // make this slower for outreaches
+        double maxPower = .8;
+        double maxSpeed = .8
+                ;  // make this slower for outreaches
 
         // This is needed to make sure we don't pass > 1.0 to any wheel
         // It allows us to keep all of the motors in proportion to what they should
