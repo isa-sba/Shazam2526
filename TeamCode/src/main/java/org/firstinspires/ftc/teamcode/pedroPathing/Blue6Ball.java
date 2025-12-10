@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -13,21 +14,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Configurable
-@Autonomous(name = "BlueGoalAuto", group = "Examples")
-public class BlueGoalAuto extends OpMode {
+@Autonomous(name = "Blue6Ball", group = "Examples")
+public class Blue6Ball extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     public PathChain Path1;
     public PathChain Path2;
+    public PathChain Path3;
+    public PathChain Path4;
 
     DcMotor leftOuttake, rightOuttake;
     CRServo loading;
     DcMotor intake;
 
-    private final Pose startPose = new Pose(28.687, 132.921, Math.toRadians(-35));
+    private final Pose startPose = new Pose(56.000, 8.500, Math.toRadians(270));
     public boolean launchingBalls(Timer timer,double shooterSpinUpTime){
-        if(timer.getElapsedTimeSeconds()>10){
+        if(timer.getElapsedTimeSeconds()>7){
             leftOuttake.setPower(0);
             rightOuttake.setPower(0);
             loading.setPower(0);
@@ -47,23 +50,59 @@ public class BlueGoalAuto extends OpMode {
         return false;
 
     }
+    public boolean intakingBalls(Timer timer){
+        if(timer.getElapsedTimeSeconds()>5){
+            leftOuttake.setPower(0);
+            rightOuttake.setPower(0);
+            loading.setPower(0);
+            intake.setPower(0);
+            System.out.println("turned off");
+            return true;
+        }
+
+        loading.setPower(1);
+        intake.setPower(1);
+
+        System.out.println("intake and loading");
+        return false;
+
+    }
     public void buildPaths() {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(28.687, 132.921), new Pose(45.883, 98.526))
+                        new BezierCurve(
+                                new Pose(56.000, 8.500),
+                                new Pose(64.523, 74.560),
+                                new Pose(45.883, 98.526)
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(-45))
-                .setBrakingStrength(0.2)
+                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(-45))
+                .setBrakingStrength(0.5)
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(45.883, 98.526), new Pose(15, 100.165))
+                        new BezierLine(new Pose(45.883, 98.526), new Pose(45.883, 98.526))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-45))
-                .setBrakingStrength(0.2)
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(180))
+                .build();
+
+        Path3 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(45.883, 98.526), new Pose(45.883, 88.0796586059744))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+
+        Path4 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(45.883, 88.0796586059744), new Pose(13.314, 88.0796586059744))
+                )
+                .setTangentHeadingInterpolation()
                 .build();
     }
 
@@ -82,16 +121,41 @@ public class BlueGoalAuto extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-                System.out.println("case 2");
+                System.out.println("case 1");
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     //System.out.println("in");
-                    if (launchingBalls(pathTimer,5)) {
+                    if (launchingBalls(pathTimer,2)) {
                         /* Score Preload */
                         System.out.println("yippee");
 
                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                         follower.followPath(Path2, true);
+                        setPathState(2);
+                    }
+                }
+                break;
+
+            case 2:
+                if (!follower.isBusy()) {
+                //System.out.println("in");
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(Path3, true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                System.out.println("case 3");
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if (!follower.isBusy()) {
+                    //System.out.println("in");
+                    if (intakingBalls(pathTimer)) {
+                        /* Score Preload */
+                        System.out.println("yippee");
+
+                        /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                        follower.followPath(Path4, true);
                         setPathState(-1);
                     }
                 }

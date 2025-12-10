@@ -40,8 +40,9 @@ public class RedAuto extends OpMode {
         rightOuttake.setPower(1);
         System.out.println("turned on shooters");
         if(timer.getElapsedTimeSeconds()>shooterSpinUpTime) {
-            intake.setPower(1);
             loading.setPower(1);
+            intake.setPower(1);
+
             System.out.println("intake and loading");
         }
         return false;
