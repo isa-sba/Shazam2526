@@ -87,6 +87,7 @@ public class Blue6Ball extends OpMode {
                         new BezierLine(new Pose(45.883, 98.526), new Pose(45.883, 98.526))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(180))
+                .setBrakingStrength(0.5)
                 .build();
 
         Path3 = follower
@@ -95,6 +96,7 @@ public class Blue6Ball extends OpMode {
                         new BezierLine(new Pose(45.883, 98.526), new Pose(45.883, 88.0796586059744))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setBrakingStrength(0.5)
                 .build();
 
         Path4 = follower
@@ -103,6 +105,7 @@ public class Blue6Ball extends OpMode {
                         new BezierLine(new Pose(45.883, 88.0796586059744), new Pose(13.314, 88.0796586059744))
                 )
                 .setTangentHeadingInterpolation()
+                .setBrakingStrength(0.5)
                 .build();
     }
 
@@ -122,7 +125,8 @@ public class Blue6Ball extends OpMode {
             */
 
                 System.out.println("case 1");
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                /* This case checks the robot's posit vgggggg
+                ion and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     //System.out.println("in");
                     if (launchingBalls(pathTimer,2)) {
@@ -138,11 +142,12 @@ public class Blue6Ball extends OpMode {
 
             case 2:
                 if (!follower.isBusy()) {
-                //System.out.println("in");
+
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Path3, true);
                     setPathState(3);
+                    telemetry.addLine("turning");
                 }
                 break;
             case 3:
@@ -157,6 +162,7 @@ public class Blue6Ball extends OpMode {
                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                         follower.followPath(Path4, true);
                         setPathState(-1);
+                        telemetry.addLine("intaking");
                     }
                 }
                 break;
